@@ -1,0 +1,8 @@
+
+{
+  "name": "AI Quiz Generator - Kurikulum Merdeka",
+  "description": "A sophisticated AI-powered quiz generator for Indonesian high schools (SMA) following the Kurikulum Merdeka standards, featuring subject-specific prompting, cognitive level mapping, and admin controls.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

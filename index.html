@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Quiz Generator - Kurikulum Merdeka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- MathJax 3 Configuration for High Quality Rendering -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+          processEscapes: true,
+          packages: {'[+]': ['base', 'ams', 'noerrors', 'noundefined']}
+        },
+        loader: {load: ['[tex]/ams']},
+        options: {
+          enableMenu: false,
+          ignoreHtmlClass: 'tex2jax_ignore',
+          processHtmlClass: 'tex2jax_process'
+        },
+        chtml: {
+          scale: 1,
+          minScale: .5,
+          matchFontHeight: true,
+          displayAlign: 'center',
+          displayIndent: '0'
+        }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+        
+        .arabic-text { 
+            font-family: 'Noto Naskh Arabic', serif; 
+            direction: rtl; 
+            text-align: right; 
+            line-height: 2.2 !important; 
+            font-size: 1.25rem;
+        }
+        
+        [dir="auto"] {
+            unicode-bidi: plaintext;
+        }
+
+        .mandarin-font { font-family: 'Noto Sans SC', sans-serif; }
+        .japanese-font { font-family: 'Noto Sans JP', sans-serif; }
+        .korean-font { font-family: 'Noto Sans KR', sans-serif; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fff7ed; }
+        ::-webkit-scrollbar-thumb { background: #fb923c; border-radius: 10px; }
+        
+        @media print {
+            @page { size: A4; margin: 20mm; }
+            .no-print, header, aside, nav, button, .print-hidden { display: none !important; }
+            body { background-color: white !important; }
+            .lg\:pl-72 { padding-left: 0 !important; }
+            .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; border: 1px solid #eee !important; padding: 0 !important; }
+        }
+        
+        .mjx-chtml {
+            color: inherit !important;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "docx": "https://esm.sh/docx@^9.5.1",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-orange-50/30 text-slate-900">
+    <div id="root"></div>
+    <!-- Script utama dipanggil sebagai module untuk Vite -->
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
