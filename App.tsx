@@ -7,7 +7,7 @@ import {
   Key, Upload, Printer, FileDown, Zap, RotateCcw, Calendar, 
   Loader2, CheckCircle2, Sparkles, UserPlus, PowerOff, Power, Info, MessageSquare, ShieldCheck, ChevronRight, Image as ImageIcon,
   AlertCircle, History, ListRestart, Database, XCircle, Activity, Clock, Timer, Globe, Search, Languages, Code, UserMinus, UserCheck, UserX,
-  FileBox, FileDigit, FileType, Eye, EyeOff, Table as TableIcon, Phone, Edit3, AlertTriangle, Share2, ExternalLink
+  FileBox, FileDigit, FileType, Eye, EyeOff, Table as TableIcon, Phone, Edit3
 } from 'lucide-react';
 import { 
   User, UserRole, QuizConfig, QuizTask, SubjectCategory, 
@@ -240,96 +240,6 @@ function AdminUserManager({ users, setUsers }: { users: User[], setUsers: any })
   );
 }
 
-// --- Content Management Page ---
-function AdminContentManager({ tasks, setTasks, users }: { tasks: QuizTask[], setTasks: any, users: User[] }) {
-  const togglePublish = (taskId: string) => {
-    setTasks((prev: QuizTask[]) => prev.map(t => 
-      t.id === taskId ? { ...t, isPublished: !t.isPublished } : t
-    ));
-    alert("Status publikasi diperbarui!");
-  };
-
-  const getAuthorName = (id: string) => users.find(u => u.id === id)?.name || "Unknown Author";
-
-  return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-3xl font-black text-slate-900">Manajemen Konten</h2>
-          <p className="text-slate-500 font-medium">Kelola hasil generate soal yang dipublikasikan ke publik.</p>
-        </div>
-      </div>
-
-      <Card title="Daftar Paket Soal">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="text-[10px] font-black text-slate-400 uppercase border-b border-orange-50">
-                <th className="py-4 px-2">Topik & Penulis</th>
-                <th className="py-4 px-2">Mapel / Kelas</th>
-                <th className="py-4 px-2 text-center">Status AI</th>
-                <th className="py-4 px-2 text-center">Publikasi</th>
-                <th className="py-4 px-2 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-orange-50">
-              {tasks.map((t: QuizTask) => (
-                <tr key={t.id} className="group hover:bg-slate-50/50">
-                  <td className="py-4 px-2">
-                    <p className="font-bold text-slate-800 text-sm leading-tight">{t.config.topic}</p>
-                    <p className="text-[10px] text-orange-500 font-bold uppercase mt-1">Oleh: {getAuthorName(t.ownerId)}</p>
-                  </td>
-                  <td className="py-4 px-2">
-                    <p className="text-xs font-bold text-slate-600">{t.config.subject}</p>
-                    <p className="text-[10px] text-slate-400 font-medium">{t.config.grade}</p>
-                  </td>
-                  <td className="py-4 px-2 text-center">
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                      t.status === 'completed' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'
-                    }`}>
-                      {t.status}
-                    </span>
-                  </td>
-                  <td className="py-4 px-2 text-center">
-                    {t.status === 'completed' ? (
-                      <button 
-                        onClick={() => togglePublish(t.id)}
-                        className={`p-2 rounded-xl transition-all ${t.isPublished ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'}`}
-                        title={t.isPublished ? "Tarik dari publik" : "Publikasikan"}
-                      >
-                        {t.isPublished ? <Globe size={18} /> : <EyeOff size={18} />}
-                      </button>
-                    ) : (
-                      <span className="text-[9px] text-slate-300 italic">N/A</span>
-                    )}
-                  </td>
-                  <td className="py-4 px-2 text-right">
-                    <div className="flex justify-end gap-1">
-                      {t.status === 'completed' && (
-                        <Link to={`/quiz/view/${t.id}`} className="p-2 text-slate-400 hover:text-orange-500 hover:bg-orange-50 rounded-xl">
-                          <Eye size={16} />
-                        </Link>
-                      )}
-                      <button onClick={() => setTasks((prev: any) => prev.filter((x: any) => x.id !== t.id))} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {tasks.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="py-10 text-center text-slate-400 italic">Belum ada paket soal yang digenerate.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </Card>
-    </div>
-  );
-}
-
 function AdminSiteSettings({ siteSettings, setSiteSettings }: { siteSettings: SiteSettings, setSiteSettings: any }) {
   const [localSettings, setLocalSettings] = useState(siteSettings);
 
@@ -438,7 +348,7 @@ function AdminCronJob({ systemSettings, setSystemSettings, tasks }: { systemSett
               label="Interval (Detik)" 
               type="number" 
               value={localSettings.cronInterval} 
-              onChange={(e: any) => setLocalSettings({...localSettings, cronInterval: parseInt(e.target.value) || 1})} 
+              onChange={(e: any) => setSystemSettings({...localSettings, cronInterval: parseInt(e.target.value) || 1})} 
             />
             <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
               * Semakin besar interval, semakin ringan beban API Key Anda. Disarankan minimal 5-10 detik.
@@ -717,6 +627,7 @@ function AdminSystemSettings({ apiKeys, setApiKeys, systemSettings, setSystemSet
 }
 
 // --- LoginPage Component ---
+// Fix: Added missing LoginPage component to allow user authentication.
 function LoginPage({ onLogin }: { onLogin: (u: string, p: string) => boolean }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -748,11 +659,234 @@ function LoginPage({ onLogin }: { onLogin: (u: string, p: string) => boolean }) 
   );
 }
 
-// --- Dashboard Component ---
+// --- App Root ---
+export default function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [tasks, setTasks] = useState<QuizTask[]>(() => JSON.parse(localStorage.getItem('quiz_tasks_list') || '[]'));
+  const [apiKeys, setApiKeys] = useState<ApiKeyEntry[]>(() => JSON.parse(localStorage.getItem('quiz_api_keys') || '[]'));
+  const [logs, setLogs] = useState<LogEntry[]>(() => JSON.parse(localStorage.getItem('quiz_system_logs') || '[]'));
+  const [users, setUsers] = useState<User[]>(() => {
+    const saved = localStorage.getItem('quiz_users_list');
+    if (saved) return JSON.parse(saved);
+    // Default Users: Admin and Teacher
+    return [
+      { id: '1', username: 'hairi', password: 'Midorima88@@', name: 'Administrator', role: UserRole.ADMIN, status: 'active', quota: 9999, usedQuota: 0 },
+      { id: '2', username: 'guru', password: 'guru123', name: 'Guru Pengajar', role: UserRole.TEACHER, status: 'active', quota: 10, usedQuota: 0 }
+    ];
+  });
+  const [systemSettings, setSystemSettings] = useState<SystemSettings>(() => JSON.parse(localStorage.getItem('quiz_system_settings') || '{"factCheckerEnabled":true, "cronInterval": 10, "hourlyLimit": 50}'));
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => JSON.parse(localStorage.getItem('quiz_site_settings') || '{"siteName":"AI QUIZ SMA","siteIcon":"","seoTitle":"AI Quiz Generator - Kurikulum Merdeka SMA","seoDescription":"Platform AI tercanggih untuk evaluasi Kurikulum Merdeka.","timeZone":"Asia/Jakarta","dateFormat":"DD/MM/YYYY","sitemapXml":"","robotsTxt":""}'));
+  
+  const navigate = useNavigate();
+
+  useEffect(() => localStorage.setItem('quiz_tasks_list', JSON.stringify(tasks)), [tasks]);
+  useEffect(() => localStorage.setItem('quiz_api_keys', JSON.stringify(apiKeys)), [apiKeys]);
+  useEffect(() => localStorage.setItem('quiz_system_logs', JSON.stringify(logs)), [logs]);
+  useEffect(() => localStorage.setItem('quiz_system_settings', JSON.stringify(systemSettings)), [systemSettings]);
+  useEffect(() => localStorage.setItem('quiz_site_settings', JSON.stringify(siteSettings)), [siteSettings]);
+  useEffect(() => localStorage.setItem('quiz_users_list', JSON.stringify(users)), [users]);
+
+  const addLog = useCallback((message: string, level: LogEntry['level'] = 'info', details?: string, taskId?: string) => {
+    const newLog: LogEntry = {
+      id: Math.random().toString(36).substr(2, 9),
+      timestamp: Date.now(),
+      message,
+      level,
+      details,
+      taskId
+    };
+    setLogs(prev => [newLog, ...prev].slice(0, 100)); // Simpan 100 log terakhir
+  }, []);
+
+  useEffect(() => {
+    const worker = setInterval(async () => {
+      // Check Hourly Limit
+      const oneHourAgo = Date.now() - (60 * 60 * 1000);
+      const usageThisHour = tasks.filter(t => t.createdAt > oneHourAgo && (t.status === 'completed' || t.status === 'processing')).length;
+      
+      const pending = tasks.find(t => t.status === 'pending');
+      
+      if (pending) {
+        if (usageThisHour >= systemSettings.hourlyLimit) {
+          addLog("Limit Per Jam Tercapai", "warning", `Antrean ditangguhkan. Terpakai: ${usageThisHour}/${systemSettings.hourlyLimit}`);
+          return;
+        }
+
+        setTasks(prev => prev.map(t => t.id === pending.id ? { ...t, status: 'processing' } : t));
+        addLog(`Memulai pemrosesan soal: ${pending.config.topic}`, 'info', `Mapel: ${pending.config.subject}`, pending.id);
+        
+        // Pick rotating API key
+        const selectedKeyEntry = getRotatingApiKey(apiKeys);
+        
+        if (!selectedKeyEntry) {
+          const errMsg = "Tidak ada API Key aktif yang tersedia.";
+          setTasks(prev => prev.map(t => t.id === pending.id ? { ...t, status: 'failed', error: errMsg } : t));
+          addLog(`Gagal memproses ${pending.config.topic}`, 'error', errMsg, pending.id);
+          return;
+        }
+
+        addLog(`API Key terpilih: ${selectedKeyEntry.label}`, 'info', `Status: ${selectedKeyEntry.status}`, pending.id);
+
+        try {
+          const config = { ...pending.config, factCheckerEnabled: systemSettings.factCheckerEnabled };
+          addLog(`Mengirim request ke Gemini...`, 'info', `Prompt size: ~${JSON.stringify(config).length} chars`, pending.id);
+          
+          const result = await generateQuizWithGemini(config as QuizConfig, selectedKeyEntry);
+          
+          addLog(`Gemini merespon. Berhasil mendapatkan ${result.questions.length} soal.`, 'success', undefined, pending.id);
+
+          // Update usage statistics
+          setApiKeys(prev => prev.map(k => k.id === selectedKeyEntry.id ? { ...k, usageCount: k.usageCount + 1, lastUsedAt: Date.now() } : k));
+
+          // GENERASI GAMBAR SOAL
+          if (config.imageCount > 0) {
+            const countToGen = Math.min(config.imageCount, result.questions.length);
+            addLog(`Memulai generate ${countToGen} ilustrasi bergambar...`, 'info', undefined, pending.id);
+            for (let i = 0; i < countToGen; i++) {
+              let q = result.questions[i];
+              const imgKey = getRotatingApiKey(apiKeys) || selectedKeyEntry;
+              q.imageUrl = await generateImageWithGemini(q.imagePrompt || q.questionText, imgKey.key) || undefined;
+            }
+            addLog(`Ilustrasi soal selesai.`, 'success', undefined, pending.id);
+          }
+
+          // GENERASI GAMBAR PILIHAN JAWABAN
+          if (config.imageOptionCount > 0) {
+            const countToGen = Math.min(config.imageOptionCount, result.questions.length);
+            addLog(`Memulai generate ilustrasi pilihan jawaban untuk ${countToGen} soal...`, 'info', undefined, pending.id);
+            for (let i = 0; i < countToGen; i++) {
+              let q = result.questions[i];
+              if (q.options && q.optionImagePrompts) {
+                q.optionImageUrls = [];
+                for (let j = 0; j < q.options.length; j++) {
+                   const imgKey = getRotatingApiKey(apiKeys) || selectedKeyEntry;
+                   const prompt = q.optionImagePrompts[j] || q.options[j];
+                   const url = await generateImageWithGemini(prompt, imgKey.key);
+                   if (url) q.optionImageUrls.push(url);
+                }
+              }
+            }
+            addLog(`Ilustrasi pilihan jawaban selesai.`, 'success', undefined, pending.id);
+          }
+          
+          setTasks(prev => prev.map(t => t.id === pending.id ? { ...t, status: 'completed', result } : t));
+          addLog(`Paket soal "${pending.config.topic}" siap digunakan.`, 'success', undefined, pending.id);
+        } catch (e: any) {
+          console.error("Gemini Error:", e);
+          const errorMsg = `API Error (${selectedKeyEntry.label}): ${e.message}`;
+          
+          // Mark API Key as error
+          setApiKeys(prev => prev.map(k => k.id === selectedKeyEntry.id ? { ...k, status: 'error', errorMessage: e.message } : k));
+          setTasks(prev => prev.map(t => t.id === pending.id ? { ...t, status: 'failed', error: errorMsg } : t));
+          addLog(`Eror pada pemrosesan ${pending.config.topic}`, 'error', errorMsg, pending.id);
+        }
+      }
+    }, systemSettings.cronInterval * 1000); // Dynamic interval based on settings
+    
+    return () => clearInterval(worker);
+  }, [tasks, apiKeys, systemSettings, addLog]);
+
+  const handleLogin = (u: string, p: string) => {
+    const foundUser = users.find(user => user.username === u && user.password === p);
+    if (foundUser) {
+      if (foundUser.status === 'inactive') {
+        alert("Akun Anda telah dinonaktifkan oleh administrator.");
+        return false;
+      }
+      setUser(foundUser);
+      navigate('/dashboard'); 
+      return true;
+    }
+    return false;
+  };
+
+  const handleLogout = () => {
+    if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
+      setUser(null);
+      navigate('/');
+    }
+  };
+
+  return (
+    <Routes>
+      <Route path="/" element={<HomeLanding siteSettings={siteSettings} />} />
+      <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+      {user && (
+        <Route path="/*" element={
+          <div className="flex min-h-screen lg:pl-72 bg-slate-50/30">
+            <Sidebar 
+              user={user} 
+              siteSettings={siteSettings}
+              onLogout={handleLogout} 
+              isOpen={isSidebarOpen} 
+              onClose={() => setIsSidebarOpen(false)} 
+              unviewedCount={tasks.filter(t => t.ownerId === user.id && !t.viewed).length} 
+              isProcessing={tasks.some(t => t.status === 'processing')} 
+            />
+            <main className="p-6 sm:p-10 pt-24 lg:pt-10 flex-1">
+              <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden fixed top-6 left-6 p-3 bg-white border border-orange-100 rounded-xl text-orange-500 shadow-sm z-40"><Layout size={24} /></button>
+              <Routes>
+                <Route path="dashboard" element={<Dashboard user={user} tasks={tasks} setTasks={setTasks} />} />
+                <Route path="quiz/create" element={<CreateQuiz user={user} users={users} setUsers={setUsers} setTasks={setTasks} />} />
+                <Route path="quiz/history" element={<QuizHistory tasks={tasks} setTasks={setTasks} user={user} markViewed={() => setTasks(p => p.map(t => t.ownerId === user.id ? {...t, viewed: true} : t))} />} />
+                <Route path="quiz/view/:id" element={<QuizResultView tasks={tasks} siteSettings={siteSettings} />} />
+                <Route path="admin/site-settings" element={<AdminSiteSettings siteSettings={siteSettings} setSiteSettings={setSiteSettings} />} />
+                <Route path="admin/users" element={<AdminUserManager users={users} setUsers={setUsers} />} />
+                <Route path="admin/api-keys" element={<AdminApiKeyManager apiKeys={apiKeys} setApiKeys={setApiKeys} />} />
+                <Route path="admin/cron" element={<AdminCronJob systemSettings={systemSettings} setSystemSettings={setSystemSettings} tasks={tasks} />} />
+                <Route path="admin/logs" element={<AdminLogSystem logs={logs} setLogs={setLogs} />} />
+                <Route path="admin/settings" element={<AdminSystemSettings apiKeys={apiKeys} setApiKeys={setApiKeys} systemSettings={systemSettings} setSystemSettings={setSystemSettings} />} />
+              </Routes>
+            </main>
+          </div>
+        } />
+      )}
+    </Routes>
+  );
+}
+
+// --- HomeLanding Component ---
+// Fix: Removed duplicate HomeLanding function implementation.
+function HomeLanding({ siteSettings }: any) {
+  return (
+    <div className="min-h-screen bg-white">
+      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-orange-50 h-20 flex items-center justify-between px-6 lg:px-20">
+        <div className="flex items-center gap-3 font-black text-2xl text-orange-500 uppercase">
+          {siteSettings.siteIcon ? <img src={siteSettings.siteIcon} className="w-8 h-8 object-contain" /> : <BookOpen size={22} />} 
+          {siteSettings.siteName}
+        </div>
+        <Link to="/login" className="px-8 py-3 bg-orange-500 text-white rounded-full font-bold shadow-lg shadow-orange-100">Portal Guru</Link>
+      </nav>
+      <section className="pt-48 pb-32 text-center px-6">
+        <div className="max-w-4xl mx-auto">
+          <span className="px-4 py-1.5 bg-orange-50 text-orange-600 rounded-full text-xs font-black uppercase mb-6 inline-block tracking-widest">Kurikulum Merdeka SMA</span>
+          <h1 className="text-5xl md:text-7xl font-black text-slate-900 leading-[1.1] mb-8 tracking-tighter">{siteSettings.seoTitle}</h1>
+          <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-12 font-medium">{siteSettings.seoDescription}</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+             <Link to="/login" className="px-12 py-5 bg-orange-500 text-white text-lg font-black rounded-full shadow-2xl flex items-center gap-3 justify-center transition-transform hover:scale-105 active:scale-95">Mulai Sekarang <Zap size={20} /></Link>
+             <a href="https://wa.me/6285248481527" target="_blank" rel="noopener noreferrer" className="px-12 py-5 bg-white border-2 border-orange-200 text-orange-600 text-lg font-black rounded-full shadow-lg flex items-center gap-3 justify-center transition-transform hover:scale-105 active:scale-95">Hubungi Admin <Phone size={20} /></a>
+          </div>
+        </div>
+      </section>
+
+      {/* Floating WhatsApp Button */}
+      <a 
+        href="https://wa.me/6285248481527" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="fixed bottom-8 right-8 w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-90 transition-all z-[9999]"
+        title="Hubungi kami di WhatsApp"
+      >
+        <MessageSquare size={32} fill="white" />
+      </a>
+    </div>
+  );
+}
+
 function Dashboard({ user, tasks, setTasks }: any) {
   const myTasks = tasks.filter((t: any) => t.ownerId === user.id);
   const recentTasks = [...myTasks].sort((a, b) => b.createdAt - a.createdAt).slice(0, 5);
-  const failedTasks = myTasks.filter((t: any) => t.status === 'failed');
 
   const handleDelete = (id: string) => {
     if (confirm("Hapus soal ini dari riwayat?")) {
@@ -767,64 +901,19 @@ function Dashboard({ user, tasks, setTasks }: any) {
         <div className="bg-white px-4 py-2 rounded-2xl shadow-sm border border-orange-100 flex items-center gap-3"><Calendar size={18} className="text-orange-500" /><span className="font-bold text-sm">{new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })}</span></div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-slate-900 text-white border-none shadow-xl shadow-slate-100">
-           <div className="flex items-center justify-between">
-              <FileText size={20} className="text-slate-400" />
-              <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Total Soal</span>
-           </div>
-           <h4 className="text-4xl font-black mt-4">{myTasks.length}</h4>
-        </Card>
-        <Card className="bg-green-600 text-white border-none shadow-xl shadow-green-100">
-           <div className="flex items-center justify-between">
-              <CheckCircle2 size={20} className="text-green-200" />
-              <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Berhasil</span>
-           </div>
-           <h4 className="text-4xl font-black mt-4">{myTasks.filter((t:any)=>t.status==='completed').length}</h4>
-        </Card>
-        <Card className="bg-red-500 text-white border-none shadow-xl shadow-red-100">
-           <div className="flex items-center justify-between">
-              <XCircle size={20} className="text-red-100" />
-              <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Gagal</span>
-           </div>
-           <h4 className="text-4xl font-black mt-4">{failedTasks.length}</h4>
-        </Card>
-        <Card className="bg-white border-2 border-dashed border-orange-200 hover:border-orange-500 flex flex-col items-center justify-center text-center transition-all group">
-           <span className="text-[10px] font-black text-slate-400 uppercase mb-1">Sisa Kuota</span>
-           <h4 className="text-2xl font-black text-orange-600">{user.quota - user.usedQuota}</h4>
-           <Link to="/quiz/create" className="text-[10px] font-bold text-orange-400 mt-2 hover:underline group-hover:text-orange-500">Buat Baru</Link>
-        </Card>
-      </div>
-
-      {failedTasks.length > 0 && (
-        <div className="space-y-4">
-           <div className="flex items-center gap-2 px-2">
-              <AlertTriangle className="text-red-500" size={20} />
-              <h3 className="text-lg font-black text-slate-800">Gagal Digenerate</h3>
-           </div>
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {failedTasks.map((t: any) => (
-                <div key={t.id} className="bg-white border-2 border-red-50 rounded-2xl p-5 shadow-sm flex flex-col justify-between group">
-                   <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <p className="font-black text-slate-800 text-sm leading-tight">{t.config.subject}</p>
-                        <p className="text-[10px] text-slate-500 uppercase mt-0.5">{t.config.topic}</p>
-                      </div>
-                      <button onClick={() => handleDelete(t.id)} className="p-2 text-red-200 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
-                        <Trash2 size={16} />
-                      </button>
-                   </div>
-                   <div className="p-3 bg-red-50/50 rounded-xl border border-red-100">
-                      <p className="text-[10px] font-bold text-red-600 line-clamp-2" title={t.error}>{t.error || "Gagal menghubungi AI Server."}</p>
-                   </div>
-                   <div className="mt-4 flex gap-2">
-                      <Link to="/quiz/create" className="flex-1 py-2 bg-slate-100 text-slate-600 text-[10px] font-black uppercase text-center rounded-lg hover:bg-slate-200 transition-colors">Coba Lagi</Link>
-                   </div>
-                </div>
-              ))}
-           </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <Card className="bg-orange-500 text-white border-none shadow-orange-200"><FileText size={24} /><h4 className="text-4xl font-black mt-3">{myTasks.length}</h4><p className="text-[10px] font-black opacity-80 uppercase tracking-widest mt-1">Total Paket Soal</p></Card>
+        <Card className="bg-green-600 text-white border-none shadow-green-200"><CheckCircle2 size={24} /><h4 className="text-4xl font-black mt-3">{myTasks.filter((t:any)=>t.status==='completed').length}</h4><p className="text-[10px] font-black opacity-80 uppercase tracking-widest mt-1">Berhasil Digenerate</p></Card>
+        <div className="flex flex-col gap-2">
+          <Link to="/quiz/create" className="group h-full">
+            <Card className="bg-white border-2 border-dashed border-orange-200 hover:border-orange-500 h-full flex flex-col items-center justify-center text-center transition-all group-hover:bg-orange-50/50">
+              <PlusCircle size={32} className="text-orange-500 mb-2 group-hover:scale-110 transition-transform" />
+              <h4 className="text-lg font-black text-slate-800">Buat Soal Baru</h4>
+              <p className="text-xs text-slate-500 font-medium mt-1">Sisa Kuota: {user.quota - user.usedQuota}</p>
+            </Card>
+          </Link>
         </div>
-      )}
+      </div>
 
       <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -837,14 +926,8 @@ function Dashboard({ user, tasks, setTasks }: any) {
             {recentTasks.map((t: any) => (
               <div key={t.id} className="p-5 flex items-center justify-between group hover:bg-slate-50/50 transition-all">
                 <div className="flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                    t.status === 'completed' ? 'bg-green-100 text-green-600' : 
-                    t.status === 'failed' ? 'bg-red-100 text-red-600' : 
-                    'bg-orange-100 text-orange-600'
-                  }`}>
-                    {t.status === 'completed' ? <CheckCircle size={20} /> : 
-                     t.status === 'failed' ? <XCircle size={20} /> :
-                     <Loader2 size={20} className="animate-spin" />}
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${t.status === 'completed' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}>
+                    {t.status === 'completed' ? <CheckCircle size={20} /> : <Loader2 size={20} className="animate-spin" />}
                   </div>
                   <div>
                     <p className="font-black text-slate-800 text-sm leading-tight">{t.config.subject}</p>
@@ -874,345 +957,9 @@ function Dashboard({ user, tasks, setTasks }: any) {
   );
 }
 
-// --- App Root ---
-export default function App() {
-  const [user, setUser] = useState<User | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [tasks, setTasks] = useState<QuizTask[]>(() => JSON.parse(localStorage.getItem('quiz_tasks_list') || '[]'));
-  const [apiKeys, setApiKeys] = useState<ApiKeyEntry[]>(() => JSON.parse(localStorage.getItem('quiz_api_keys') || '[]'));
-  const [logs, setLogs] = useState<LogEntry[]>(() => JSON.parse(localStorage.getItem('quiz_system_logs') || '[]'));
-  const [users, setUsers] = useState<User[]>(() => {
-    const saved = localStorage.getItem('quiz_users_list');
-    if (saved) return JSON.parse(saved);
-    return [
-      { id: '1', username: 'hairi', password: 'Midorima88@@', name: 'Administrator', role: UserRole.ADMIN, status: 'active', quota: 9999, usedQuota: 0 },
-      { id: '2', username: 'guru', password: 'guru123', name: 'Guru Pengajar', role: UserRole.TEACHER, status: 'active', quota: 10, usedQuota: 0 }
-    ];
-  });
-  const [systemSettings, setSystemSettings] = useState<SystemSettings>(() => JSON.parse(localStorage.getItem('quiz_system_settings') || '{"factCheckerEnabled":true, "cronInterval": 10, "hourlyLimit": 50}'));
-  const [siteSettings, setSiteSettings] = useState<SiteSettings>(() => JSON.parse(localStorage.getItem('quiz_site_settings') || '{"siteName":"AI QUIZ SMA","siteIcon":"","seoTitle":"AI Quiz Generator - Kurikulum Merdeka SMA","seoDescription":"Platform AI tercanggih untuk evaluasi Kurikulum Merdeka.","timeZone":"Asia/Jakarta","dateFormat":"DD/MM/YYYY","sitemapXml":"","robotsTxt":""}'));
-  
-  const navigate = useNavigate();
-
-  useEffect(() => localStorage.setItem('quiz_tasks_list', JSON.stringify(tasks)), [tasks]);
-  useEffect(() => localStorage.setItem('quiz_api_keys', JSON.stringify(apiKeys)), [apiKeys]);
-  useEffect(() => localStorage.setItem('quiz_system_logs', JSON.stringify(logs)), [logs]);
-  useEffect(() => localStorage.setItem('quiz_system_settings', JSON.stringify(systemSettings)), [systemSettings]);
-  useEffect(() => localStorage.setItem('quiz_site_settings', JSON.stringify(siteSettings)), [siteSettings]);
-  useEffect(() => localStorage.setItem('quiz_users_list', JSON.stringify(users)), [users]);
-
-  const addLog = useCallback((message: string, level: LogEntry['level'] = 'info', details?: string, taskId?: string) => {
-    const newLog: LogEntry = {
-      id: Math.random().toString(36).substr(2, 9),
-      timestamp: Date.now(),
-      message,
-      level,
-      details,
-      taskId
-    };
-    setLogs(prev => [newLog, ...prev].slice(0, 100));
-  }, []);
-
-  useEffect(() => {
-    const worker = setInterval(async () => {
-      const oneHourAgo = Date.now() - (60 * 60 * 1000);
-      const usageThisHour = tasks.filter(t => t.createdAt > oneHourAgo && (t.status === 'completed' || t.status === 'processing')).length;
-      const pending = tasks.find(t => t.status === 'pending');
-      
-      if (pending) {
-        if (usageThisHour >= systemSettings.hourlyLimit) {
-          addLog("Limit Per Jam Tercapai", "warning", `Antrean ditangguhkan. Terpakai: ${usageThisHour}/${systemSettings.hourlyLimit}`);
-          return;
-        }
-
-        setTasks(prev => prev.map(t => t.id === pending.id ? { ...t, status: 'processing' } : t));
-        const selectedKeyEntry = getRotatingApiKey(apiKeys);
-        
-        if (!selectedKeyEntry) {
-          const errMsg = "Tidak ada API Key aktif yang tersedia.";
-          setTasks(prev => prev.map(t => t.id === pending.id ? { ...t, status: 'failed', error: errMsg } : t));
-          return;
-        }
-
-        try {
-          const config = { ...pending.config, factCheckerEnabled: systemSettings.factCheckerEnabled };
-          const result = await generateQuizWithGemini(config as QuizConfig, selectedKeyEntry);
-          setApiKeys(prev => prev.map(k => k.id === selectedKeyEntry.id ? { ...k, usageCount: k.usageCount + 1, lastUsedAt: Date.now() } : k));
-
-          if (config.imageCount > 0) {
-            for (let i = 0; i < Math.min(config.imageCount, result.questions.length); i++) {
-              let q = result.questions[i];
-              const imgKey = getRotatingApiKey(apiKeys) || selectedKeyEntry;
-              q.imageUrl = await generateImageWithGemini(q.imagePrompt || q.questionText, imgKey.key) || undefined;
-            }
-          }
-
-          if (config.imageOptionCount > 0) {
-            for (let i = 0; i < Math.min(config.imageOptionCount, result.questions.length); i++) {
-              let q = result.questions[i];
-              if (q.options && q.optionImagePrompts) {
-                q.optionImageUrls = [];
-                for (let j = 0; j < q.options.length; j++) {
-                   const imgKey = getRotatingApiKey(apiKeys) || selectedKeyEntry;
-                   const prompt = q.optionImagePrompts[j] || q.options[j];
-                   const url = await generateImageWithGemini(prompt, imgKey.key);
-                   if (url) q.optionImageUrls.push(url);
-                }
-              }
-            }
-          }
-          
-          setTasks(prev => prev.map(t => t.id === pending.id ? { ...t, status: 'completed', result } : t));
-          addLog(`Paket soal "${pending.config.topic}" siap digunakan.`, 'success', undefined, pending.id);
-        } catch (e: any) {
-          const errorMsg = `API Error: ${e.message}`;
-          setApiKeys(prev => prev.map(k => k.id === selectedKeyEntry.id ? { ...k, status: 'error', errorMessage: e.message } : k));
-          setTasks(prev => prev.map(t => t.id === pending.id ? { ...t, status: 'failed', error: errorMsg } : t));
-          addLog(`Eror pada pemrosesan ${pending.config.topic}`, 'error', errorMsg, pending.id);
-        }
-      }
-    }, systemSettings.cronInterval * 1000);
-    return () => clearInterval(worker);
-  }, [tasks, apiKeys, systemSettings, addLog]);
-
-  const handleLogin = (u: string, p: string) => {
-    const foundUser = users.find(user => user.username === u && user.password === p);
-    if (foundUser) {
-      if (foundUser.status === 'inactive') {
-        alert("Akun Anda telah dinonaktifkan oleh administrator.");
-        return false;
-      }
-      setUser(foundUser);
-      navigate('/dashboard'); 
-      return true;
-    }
-    return false;
-  };
-
-  const handleLogout = () => {
-    if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
-      setUser(null);
-      navigate('/');
-    }
-  };
-
-  return (
-    <Routes>
-      <Route path="/" element={<HomeLanding siteSettings={siteSettings} tasks={tasks} users={users} />} />
-      <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-      <Route path="/view/:id" element={<PublicQuizView tasks={tasks} />} />
-      {user && (
-        <Route path="/*" element={
-          <div className="flex min-h-screen lg:pl-72 bg-slate-50/30">
-            <Sidebar 
-              user={user} 
-              siteSettings={siteSettings}
-              onLogout={handleLogout} 
-              isOpen={isSidebarOpen} 
-              onClose={() => setIsSidebarOpen(false)} 
-              unviewedCount={tasks.filter(t => t.ownerId === user.id && !t.viewed).length} 
-              isProcessing={tasks.some(t => t.status === 'processing')} 
-            />
-            <main className="p-6 sm:p-10 pt-24 lg:pt-10 flex-1">
-              <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden fixed top-6 left-6 p-3 bg-white border border-orange-100 rounded-xl text-orange-500 shadow-sm z-40"><Layout size={24} /></button>
-              <Routes>
-                <Route path="dashboard" element={<Dashboard user={user} tasks={tasks} setTasks={setTasks} />} />
-                <Route path="quiz/create" element={<CreateQuiz user={user} users={users} setUsers={setUsers} setTasks={setTasks} />} />
-                <Route path="quiz/history" element={<QuizHistory tasks={tasks} setTasks={setTasks} user={user} markViewed={() => setTasks(p => p.map(t => t.ownerId === user.id ? {...t, viewed: true} : t))} />} />
-                <Route path="quiz/view/:id" element={<QuizResultView tasks={tasks} siteSettings={siteSettings} />} />
-                <Route path="admin/site-settings" element={<AdminSiteSettings siteSettings={siteSettings} setSiteSettings={setSiteSettings} />} />
-                <Route path="admin/content" element={<AdminContentManager tasks={tasks} setTasks={setTasks} users={users} />} />
-                <Route path="admin/users" element={<AdminUserManager users={users} setUsers={setUsers} />} />
-                <Route path="admin/api-keys" element={<AdminApiKeyManager apiKeys={apiKeys} setApiKeys={setApiKeys} />} />
-                <Route path="admin/cron" element={<AdminCronJob systemSettings={systemSettings} setSystemSettings={setSystemSettings} tasks={tasks} />} />
-                <Route path="admin/logs" element={<AdminLogSystem logs={logs} setLogs={setLogs} />} />
-                <Route path="admin/settings" element={<AdminSystemSettings apiKeys={apiKeys} setApiKeys={setApiKeys} systemSettings={systemSettings} setSystemSettings={setSystemSettings} />} />
-              </Routes>
-            </main>
-          </div>
-        } />
-      )}
-    </Routes>
-  );
-}
-
-function HomeLanding({ siteSettings, tasks, users }: any) {
-  const publishedQuizzes = tasks.filter((t: any) => t.isPublished && t.status === 'completed');
-
-  const getAuthorName = (id: string) => users.find((u: any) => u.id === id)?.name || "Anonim";
-
-  return (
-    <div className="min-h-screen bg-white">
-      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-orange-50 h-20 flex items-center justify-between px-6 lg:px-20">
-        <div className="flex items-center gap-3 font-black text-2xl text-orange-500 uppercase">
-          {siteSettings.siteIcon ? <img src={siteSettings.siteIcon} className="w-8 h-8 object-contain" /> : <BookOpen size={22} />} 
-          {siteSettings.siteName}
-        </div>
-        <Link to="/login" className="px-8 py-3 bg-orange-500 text-white rounded-full font-bold shadow-lg shadow-orange-100">Portal Guru</Link>
-      </nav>
-      
-      <section className="pt-48 pb-32 text-center px-6">
-        <div className="max-w-4xl mx-auto">
-          <span className="px-4 py-1.5 bg-orange-50 text-orange-600 rounded-full text-xs font-black uppercase mb-6 inline-block tracking-widest">Kurikulum Merdeka SMA</span>
-          <h1 className="text-5xl md:text-7xl font-black text-slate-900 leading-[1.1] mb-8 tracking-tighter">{siteSettings.seoTitle}</h1>
-          <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-12 font-medium">{siteSettings.seoDescription}</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-             <Link to="/login" className="px-12 py-5 bg-orange-500 text-white text-lg font-black rounded-full shadow-2xl flex items-center gap-3 justify-center transition-transform hover:scale-105 active:scale-95">Mulai Sekarang <Zap size={20} /></Link>
-             <a href="#bank-soal" className="px-12 py-5 bg-white border-2 border-orange-200 text-orange-600 text-lg font-black rounded-full shadow-lg flex items-center gap-3 justify-center transition-transform hover:scale-105 active:scale-95">Cari Bank Soal <Search size={20} /></a>
-          </div>
-        </div>
-      </section>
-
-      <section id="bank-soal" className="py-24 bg-slate-50/50 px-6 lg:px-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
-            <div>
-              <h2 className="text-4xl font-black text-slate-900">Bank Soal Terpublikasi</h2>
-              <p className="text-slate-500 mt-2 font-medium">Soal-soal terbaik hasil kolaborasi guru di seluruh Indonesia.</p>
-            </div>
-            <div className="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-orange-50">
-              <span className="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">Total Koleksi:</span>
-              <span className="px-4 py-1 bg-orange-500 text-white rounded-xl font-black">{publishedQuizzes.length}</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {publishedQuizzes.map((t: any) => (
-              <div key={t.id} className="bg-white rounded-3xl p-8 border border-orange-100 shadow-sm hover:shadow-xl hover:shadow-orange-100 transition-all group flex flex-col justify-between h-full">
-                <div>
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="px-3 py-1 bg-orange-50 text-orange-600 rounded-lg text-[10px] font-black uppercase tracking-tight">{t.config.subject}</span>
-                    <span className="px-3 py-1 bg-slate-50 text-slate-500 rounded-lg text-[10px] font-black uppercase tracking-tight">{t.config.grade}</span>
-                  </div>
-                  <h3 className="text-xl font-black text-slate-900 leading-tight mb-2 group-hover:text-orange-500 transition-colors">{t.config.topic}</h3>
-                  <p className="text-sm text-slate-500 mb-6 line-clamp-2">{t.config.subTopic || "Materi Kurikulum Merdeka Fase E/F SMA."}</p>
-                </div>
-                
-                <div className="border-t border-orange-50 pt-6 mt-auto">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-black text-xs">
-                        {getAuthorName(t.ownerId).charAt(0)}
-                      </div>
-                      <div className="flex flex-col">
-                        <p className="text-[10px] font-black text-slate-900 uppercase leading-none">{getAuthorName(t.ownerId)}</p>
-                        <p className="text-[9px] text-slate-400 font-bold uppercase mt-0.5">Guru Pengajar</p>
-                      </div>
-                    </div>
-                    <Link to={`/view/${t.id}`} className="p-3 bg-orange-500 text-white rounded-xl shadow-lg shadow-orange-100 group-hover:scale-110 transition-transform">
-                      <ExternalLink size={18} />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-            {publishedQuizzes.length === 0 && (
-              <div className="col-span-full py-24 text-center">
-                <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6 text-orange-200">
-                  <FileBox size={40} />
-                </div>
-                <h3 className="text-xl font-black text-slate-900">Belum Ada Soal Publik</h3>
-                <p className="text-slate-400 font-medium mt-1">Nantikan rilis soal-soal berkualitas lainnya segera.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <footer className="py-20 bg-slate-900 text-white px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-3 font-black text-2xl uppercase mb-6">
-            <BookOpen size={28} /> {siteSettings.siteName}
-          </div>
-          <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed">Platform kecerdasan buatan untuk membantu guru Indonesia menciptakan asesmen berkualitas tinggi sesuai standar Kurikulum Merdeka.</p>
-          <div className="mt-12 pt-12 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">© 2024 - {siteSettings.siteName}. All Rights Reserved.</p>
-            <div className="flex gap-8">
-               <a href="#" className="text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest">Terms of Use</a>
-               <a href="#" className="text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest">Privacy Policy</a>
-               <a href="https://wa.me/6285248481527" className="text-[10px] font-bold text-slate-500 hover:text-white uppercase tracking-widest">Support</a>
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      <a href="https://wa.me/6285248481527" target="_blank" rel="noopener noreferrer" className="fixed bottom-8 right-8 w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-90 transition-all z-[9999]" title="Hubungi kami di WhatsApp">
-        <MessageSquare size={32} fill="white" />
-      </a>
-    </div>
-  );
-}
-
-// --- Public Quiz Viewer ---
-function PublicQuizView({ tasks }: { tasks: QuizTask[] }) {
-  const { id } = useParams();
-  const task = tasks.find(t => t.id === id);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const renderMath = () => {
-      const MathJax = (window as any).MathJax;
-      if (MathJax && MathJax.typesetPromise && containerRef.current) {
-        MathJax.typesetPromise([containerRef.current]).catch((err: any) => console.error('MathJax failed:', err));
-      }
-    };
-    renderMath();
-  }, [task?.id]);
-
-  if (!task || !task.result) return <div className="p-20 text-center font-bold">Soal tidak ditemukan atau belum dipublikasikan.</div>;
-
-  return (
-    <div className="min-h-screen bg-white pb-24 tex2jax_process" ref={containerRef}>
-      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-orange-50 h-20 flex items-center justify-between px-6 lg:px-20 print-hidden">
-        <Link to="/" className="flex items-center gap-3 font-black text-xl text-orange-500 uppercase">
-          <BookOpen size={22} /> Public Bank
-        </Link>
-        <Button onClick={() => window.print()}><Printer size={18} /> Cetak Soal</Button>
-      </nav>
-
-      <div className="max-w-4xl mx-auto pt-32 px-6">
-        <div className="text-center mb-16">
-          <span className="px-4 py-1.5 bg-orange-50 text-orange-600 rounded-full text-[10px] font-black uppercase mb-4 inline-block tracking-widest">{task.config.grade}</span>
-          <h1 className="text-4xl font-black text-slate-900 leading-tight mb-2 uppercase">{task.config.subject}</h1>
-          <p className="text-xl text-slate-500 font-medium">Topik: {task.config.topic}</p>
-        </div>
-
-        <div className="space-y-12">
-          {task.result.questions.map((q: any, i: number) => (
-            <div key={i} className="relative group p-8 rounded-3xl border border-orange-100 hover:border-orange-500 transition-colors break-inside-avoid">
-               <div className="flex gap-4 mb-6">
-                  <span className="w-10 h-10 bg-orange-500 text-white rounded-xl flex items-center justify-center font-black shrink-0">{i + 1}</span>
-                  <div className="text-xl font-bold text-slate-800 leading-relaxed pt-1">{q.questionText}</div>
-               </div>
-               {q.imageUrl && <img src={q.imageUrl} className="w-full max-h-[400px] object-contain rounded-2xl mb-8 border border-slate-100" />}
-               {q.options && (
-                 <div className="grid grid-cols-1 gap-3 ml-14">
-                   {q.options.map((opt: string, idx: number) => (
-                     <div key={idx} className="flex items-start gap-4 p-4 rounded-xl border border-slate-100 hover:bg-orange-50/50 transition-colors">
-                        <div className="w-6 h-6 rounded bg-slate-50 border border-slate-200 flex items-center justify-center text-[10px] font-black text-slate-400 shrink-0 uppercase">{String.fromCharCode(65 + idx)}</div>
-                        <div className="text-slate-700 font-bold">{opt}</div>
-                     </div>
-                   ))}
-                 </div>
-               )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function QuizHistory({ tasks, setTasks, user, markViewed }: any) {
   useEffect(() => { markViewed(); }, []);
   const myTasks = tasks.filter((t: any) => t.ownerId === user.id);
-
-  const togglePublish = (taskId: string) => {
-    setTasks((prev: QuizTask[]) => prev.map(t => 
-      t.id === taskId ? { ...t, isPublished: !t.isPublished } : t
-    ));
-    alert("Status publikasi diperbarui!");
-  };
 
   const handleDeleteTask = (id: string) => {
     if (confirm("Apakah Anda yakin ingin menghapus riwayat soal ini?")) {
@@ -1245,7 +992,6 @@ function QuizHistory({ tasks, setTasks, user, markViewed }: any) {
             <thead className="bg-slate-50 border-b-2 border-orange-50 text-[10px] font-black text-slate-400 uppercase">
               <tr>
                 <th className="py-4 px-6">Topik / Mapel</th>
-                <th className="py-4 px-6 text-center">Publik</th>
                 <th className="py-4 px-6">Status & Progres</th>
                 <th className="py-4 px-6 text-right">Aksi</th>
               </tr>
@@ -1260,17 +1006,6 @@ function QuizHistory({ tasks, setTasks, user, markViewed }: any) {
                       <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-bold uppercase">{t.config.grade}</span>
                       <span className="text-[9px] text-slate-400 font-bold uppercase">{new Date(t.createdAt).toLocaleDateString()}</span>
                     </div>
-                  </td>
-                  <td className="py-6 px-6 text-center">
-                    {t.status === 'completed' && (
-                      <button 
-                        onClick={() => togglePublish(t.id)}
-                        className={`p-2 rounded-xl transition-all ${t.isPublished ? 'text-blue-500 hover:bg-blue-50' : 'text-slate-300 hover:bg-slate-50'}`}
-                        title={t.isPublished ? "Terpublikasi" : "Belum Publik"}
-                      >
-                        {t.isPublished ? <Globe size={20} /> : <EyeOff size={20} />}
-                      </button>
-                    )}
                   </td>
                   <td className="py-6 px-6">
                     <div className="space-y-2">
@@ -1329,6 +1064,7 @@ function QuizHistory({ tasks, setTasks, user, markViewed }: any) {
                 <FileText size={40} />
               </div>
               <p className="text-slate-400 font-black text-lg">Belum Ada Riwayat</p>
+              <p className="text-slate-300 text-sm mt-1">Mulailah dengan membuat soal pertama Anda.</p>
               <Link to="/quiz/create" className="mt-6 inline-flex items-center gap-2 text-orange-500 font-bold hover:gap-3 transition-all">
                 Buat Soal Sekarang <ChevronRight size={18} />
               </Link>
@@ -1336,7 +1072,13 @@ function QuizHistory({ tasks, setTasks, user, markViewed }: any) {
           )}
         </div>
       </Card>
-      <style>{`@keyframes progress { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }`}</style>
+      
+      <style>{`
+        @keyframes progress {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(200%); }
+        }
+      `}</style>
     </div>
   );
 }
@@ -1354,19 +1096,18 @@ function Sidebar({ user, siteSettings, onLogout, isOpen, onClose, unviewedCount,
           </div>
           <div><h1 className="font-black text-slate-800 text-lg uppercase leading-tight truncate max-w-[140px]">{siteSettings.siteName}</h1><p className="text-[10px] text-orange-500 font-black uppercase tracking-widest">Generator</p></div>
         </div>
-        <nav className="flex-1 p-6 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-6 space-y-2">
           <Link to="/dashboard" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/dashboard' ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'text-slate-600 hover:bg-orange-50'}`}><Layout size={20} /><span className="font-bold">Dashboard</span></Link>
           <Link to="/quiz/create" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/quiz/create' ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'text-slate-600 hover:bg-orange-50'}`}><PlusCircle size={20} /><span className="font-bold">Buat Soal</span></Link>
-          <Link to="/quiz/history" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all relative ${location.pathname.startsWith('/quiz/history') ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'text-slate-600 hover:bg-orange-50'}`}><History size={20} /><span className="font-bold">Riwayat Soal</span>{unviewedCount > 0 && <span className="absolute top-3 right-5 h-6 w-6 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-black animate-bounce ring-4 ring-white">{unviewedCount}</span>}</Link>
+          <Link to="/quiz/history" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all relative ${location.pathname.startsWith('/quiz/history') ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'text-slate-600 hover:bg-orange-50'}`}><FileText size={20} /><span className="font-bold">Riwayat Soal</span>{unviewedCount > 0 && <span className="absolute top-3 right-5 h-6 w-6 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-black animate-bounce ring-4 ring-white">{unviewedCount}</span>}</Link>
           {isAdmin && (
             <>
               <div className="pt-8 pb-4 ml-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Administrator</div>
-              <Link to="/admin/content" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/admin/content' ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'text-slate-600 hover:bg-orange-50'}`}><FileBox size={20} /><span className="font-bold">Manajemen Konten</span></Link>
+              <Link to="/admin/site-settings" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/admin/site-settings' ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'text-slate-600 hover:bg-orange-50'}`}><Globe size={20} /><span className="font-bold">Site Settings</span></Link>
               <Link to="/admin/users" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/admin/users' ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'text-slate-600 hover:bg-orange-50'}`}><Users size={20} /><span className="font-bold">Kelola User</span></Link>
               <Link to="/admin/api-keys" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/admin/api-keys' ? 'bg-orange-500 text-white' : 'text-slate-600 hover:bg-orange-50'}`}><Key size={20} /><span className="font-bold">API Manager</span></Link>
               <Link to="/admin/cron" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/admin/cron' ? 'bg-orange-500 text-white' : 'text-slate-600 hover:bg-orange-50'}`}><Timer size={20} /><span className="font-bold">Cron Job</span></Link>
               <Link to="/admin/logs" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/admin/logs' ? 'bg-orange-500 text-white' : 'text-slate-600 hover:bg-orange-50'}`}><Activity size={20} /><span className="font-bold">Log Sistem</span></Link>
-              <Link to="/admin/site-settings" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/admin/site-settings' ? 'bg-orange-500 text-white shadow-xl shadow-orange-100' : 'text-slate-600 hover:bg-orange-50'}`}><Globe size={20} /><span className="font-bold">Site Settings</span></Link>
               <Link to="/admin/settings" onClick={onClose} className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all ${location.pathname === '/admin/settings' ? 'bg-orange-500 text-white' : 'text-slate-600 hover:bg-orange-50'}`}><Settings size={20} /><span className="font-bold">Pengaturan</span></Link>
             </>
           )}
@@ -1380,8 +1121,13 @@ function Sidebar({ user, siteSettings, onLogout, isOpen, onClose, unviewedCount,
         {isProcessing && <div className="m-6 p-4 bg-orange-50 border-2 border-orange-100 rounded-2xl animate-pulse flex items-center gap-4"><Loader2 size={18} className="animate-spin text-orange-500" /><p className="text-[10px] font-black text-orange-600 uppercase">Gemini Generating...</p></div>}
         <div className="p-6 border-t border-orange-50">
           <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl">
-            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-xs font-black uppercase">{user.name.charAt(0)}</div>
-            <div className="flex-1 overflow-hidden"><p className="text-[10px] font-black text-slate-800 truncate uppercase tracking-tight">{user.name}</p><p className="text-[9px] font-bold text-slate-400 truncate uppercase">Level: {user.role}</p></div>
+            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-xs font-black uppercase">
+              {user.name.charAt(0)}
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <p className="text-[10px] font-black text-slate-800 truncate uppercase tracking-tight">{user.name}</p>
+              <p className="text-[9px] font-bold text-slate-400 truncate uppercase">Level: {user.role}</p>
+            </div>
           </div>
         </div>
       </aside>
@@ -1390,12 +1136,24 @@ function Sidebar({ user, siteSettings, onLogout, isOpen, onClose, unviewedCount,
 };
 
 function CreateQuiz({ user, users, setUsers, setTasks }: any) {
-  const [config, setConfig] = useState<Partial<QuizConfig>>({ category: SubjectCategory.WAJIB, subject: SUBJECTS[SubjectCategory.WAJIB][0], grade: GRADES[0], questionType: QuestionType.PG, totalQuestions: 10, optionsCount: 5, difficulty: Difficulty.SEDANG, cognitiveLevel: CognitiveLevel.C1, imageCount: 0, imageOptionCount: 0 });
+  const [config, setConfig] = useState<Partial<QuizConfig>>({ 
+    category: SubjectCategory.WAJIB, 
+    subject: SUBJECTS[SubjectCategory.WAJIB][0], 
+    grade: GRADES[0], 
+    questionType: QuestionType.PG, 
+    totalQuestions: 10, 
+    optionsCount: 5, 
+    difficulty: Difficulty.SEDANG, 
+    cognitiveLevel: CognitiveLevel.C1, 
+    imageCount: 0,
+    imageOptionCount: 0
+  });
   const [topic, setTopic] = useState('');
   const [subTopic, setSubTopic] = useState('');
   const [summary, setSummary] = useState('');
   const navigate = useNavigate();
 
+  // Find live user record to check quota
   const currentUserRecord = users.find((u: User) => u.id === user.id);
   const remainingQuota = currentUserRecord ? currentUserRecord.quota - currentUserRecord.usedQuota : 0;
   const isQuotaExhausted = remainingQuota <= 0;
@@ -1410,10 +1168,19 @@ function CreateQuiz({ user, users, setUsers, setTasks }: any) {
   };
 
   const handleGenerate = () => {
-    if (isQuotaExhausted) return alert('Kuota pembuatan soal Anda telah habis!');
+    if (isQuotaExhausted) return alert('Kuota pembuatan soal Anda telah habis! Silakan hubungi administrator.');
     if (!topic) return alert('Mohon isi topik materi!');
+    
+    // Deduct quota immediately
     setUsers((prev: User[]) => prev.map(u => u.id === user.id ? { ...u, usedQuota: u.usedQuota + 1 } : u));
-    const newTask: QuizTask = { id: Math.random().toString(36).substr(2, 9), status: 'pending', config: { ...config, topic, subTopic, summaryText: summary } as QuizConfig, ownerId: user.id, createdAt: Date.now() };
+
+    const newTask: QuizTask = {
+      id: Math.random().toString(36).substr(2, 9),
+      status: 'pending',
+      config: { ...config, topic, subTopic, summaryText: summary } as QuizConfig,
+      ownerId: user.id,
+      createdAt: Date.now()
+    };
     setTasks((prev: any) => [newTask, ...prev]);
     navigate('/quiz/history');
   };
@@ -1430,18 +1197,45 @@ function CreateQuiz({ user, users, setUsers, setTasks }: any) {
           <span className={`text-xl font-black ${isQuotaExhausted ? 'text-red-500' : 'text-orange-600'}`}>{remainingQuota}</span>
         </div>
       </div>
+
+      {isQuotaExhausted && (
+        <div className="p-6 bg-red-100 border-2 border-red-200 rounded-3xl flex items-center gap-4 text-red-700">
+          <AlertCircle size={32} />
+          <div>
+            <p className="font-black">Batas Pembuatan Soal Tercapai</p>
+            <p className="text-sm">Anda telah menggunakan semua kuota langganan. Hubungi admin untuk menambah kuota atau memperpanjang masa aktif.</p>
+          </div>
+        </div>
+      )}
+
       <div className="grid lg:grid-cols-2 gap-8">
         <Card title="Identitas Pelajaran">
            <div className="space-y-6">
               <Select label="Jenjang (Fase)" options={GRADES} value={config.grade} onChange={(e: any) => setConfig({...config, grade: e.target.value})} />
               <Select label="Kelompok Peminatan" options={Object.values(SubjectCategory)} value={config.category} onChange={(e: any) => setConfig({...config, category: e.target.value as SubjectCategory, subject: SUBJECTS[e.target.value as SubjectCategory][0]})} />
               <Select label="Mata Pelajaran" options={SUBJECTS[config.category as SubjectCategory] || []} value={config.subject} onChange={(e: any) => setConfig({...config, subject: e.target.value})} />
+              
               <div className="p-6 bg-orange-50 rounded-2xl border border-orange-100 space-y-6">
                 <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest">Parameter Visual AI</p>
                 <div className="grid grid-cols-2 gap-4">
-                  <Input label="Jml Soal Bergambar" type="number" min="0" max={config.totalQuestions} value={config.imageCount} onChange={(e:any) => setConfig({...config, imageCount: Math.min(parseInt(e.target.value) || 0, config.totalQuestions || 10)})} />
-                  <Input label="Jml Jawaban Bergambar" type="number" min="0" max={config.totalQuestions} value={config.imageOptionCount} onChange={(e:any) => setConfig({...config, imageOptionCount: Math.min(parseInt(e.target.value) || 0, config.totalQuestions || 10)})} />
+                  <Input 
+                    label="Jml Soal Bergambar" 
+                    type="number" 
+                    min="0" 
+                    max={config.totalQuestions}
+                    value={config.imageCount} 
+                    onChange={(e:any) => setConfig({...config, imageCount: Math.min(parseInt(e.target.value) || 0, config.totalQuestions || 10)})} 
+                  />
+                  <Input 
+                    label="Jml Jawaban Bergambar" 
+                    type="number" 
+                    min="0" 
+                    max={config.totalQuestions}
+                    value={config.imageOptionCount} 
+                    onChange={(e:any) => setConfig({...config, imageOptionCount: Math.min(parseInt(e.target.value) || 0, config.totalQuestions || 10)})} 
+                  />
                 </div>
+                <p className="text-[9px] text-orange-400 font-medium leading-relaxed italic">* Jawaban bergambar membutuhkan waktu pemrosesan lebih lama karena AI akan membuat ilustrasi untuk setiap pilihan.</p>
               </div>
             </div>
         </Card>
@@ -1449,6 +1243,7 @@ function CreateQuiz({ user, users, setUsers, setTasks }: any) {
            <div className="space-y-6">
               <Input label="Topik Utama / TP" value={topic} onChange={(e: any) => setTopic(e.target.value)} placeholder="Misal: Perubahan Lingkungan" />
               <Input label="Sub-materi" value={subTopic} onChange={(e: any) => setSubTopic(e.target.value)} placeholder="Opsional..." />
+              
               <div className="flex flex-col gap-1.5 w-full">
                 <label className="text-sm font-bold text-slate-700 ml-1">Unggah Referensi Materi (.txt)</label>
                 <div className="relative group">
@@ -1460,13 +1255,34 @@ function CreateQuiz({ user, users, setUsers, setTasks }: any) {
                   {summary && <button onClick={() => setSummary('')} className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-red-500 hover:bg-red-50 rounded-lg"><X size={16} /></button>}
                 </div>
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <Select label="Tipe Soal" options={Object.values(QuestionType)} value={config.questionType} onChange={(e: any) => setConfig({...config, questionType: e.target.value as QuestionType})} />
                 <Select label="Kesulitan" options={Object.values(Difficulty)} value={config.difficulty} onChange={(e: any) => setConfig({...config, difficulty: e.target.value as Difficulty})} />
               </div>
+              
+              {(config.questionType === QuestionType.PG || config.questionType === QuestionType.PGK) && (
+                <Select 
+                  label="Jumlah Opsi Jawaban" 
+                  options={[
+                    { value: 4, label: '4 Opsi (A-D)' },
+                    { value: 5, label: '5 Opsi (A-E)' }
+                  ]} 
+                  value={config.optionsCount || 5} 
+                  onChange={(e: any) => setConfig({...config, optionsCount: parseInt(e.target.value)})} 
+                />
+              )}
+
               <div className="flex flex-col gap-1.5 w-full">
                 <label className="text-sm font-bold text-slate-700 ml-1">Total Soal</label>
-                <input type="number" className="w-full px-5 py-3.5 rounded-2xl border-2 border-slate-100 bg-slate-50/50 focus:border-orange-500 outline-none font-bold" value={config.totalQuestions} min="1" max="50" onChange={(e:any) => setConfig({...config, totalQuestions: parseInt(e.target.value) || 1})} />
+                <input 
+                  type="number" 
+                  className="w-full px-5 py-3.5 rounded-2xl border-2 border-slate-100 bg-slate-50/50 focus:border-orange-500 outline-none font-bold" 
+                  value={config.totalQuestions} 
+                  min="1" 
+                  max="50"
+                  onChange={(e:any) => setConfig({...config, totalQuestions: parseInt(e.target.value) || 1})} 
+                />
               </div>
               <Button onClick={handleGenerate} className="w-full py-5 text-lg" disabled={isQuotaExhausted}><Zap size={22} fill="white" /> Generate Paket Soal</Button>
             </div>
@@ -1476,6 +1292,7 @@ function CreateQuiz({ user, users, setUsers, setTasks }: any) {
   );
 }
 
+// --- QuizResultView ---
 function QuizResultView({ tasks, siteSettings }: any) {
   const { id } = useParams();
   const task = tasks.find((t: any) => t.id === id);
@@ -1496,56 +1313,373 @@ function QuizResultView({ tasks, siteSettings }: any) {
 
   if (!task || !task.result) return <div className="p-20 text-center"><Loader2 className="animate-spin mx-auto text-orange-500 mb-4" size={48} /><p className="font-black">Memuat Hasil...</p></div>;
 
-  const getPageDimensions = () => paperSize === 'A4' ? { width: 11906, height: 16838 } : { width: 12189, height: 18708 };
+  const getPageDimensions = () => {
+    if (paperSize === 'A4') {
+      return { width: 11906, height: 16838 }; // A4: 210mm x 297mm
+    } else {
+      return { width: 12189, height: 18708 }; // Folio/F4: 215mm x 330mm (umum di Indo sebagai 'Legal')
+    }
+  };
 
   const handleDownloadSoalDocx = async () => {
     const dimensions = getPageDimensions();
     const children: any[] = [
-      new docx.Paragraph({ text: "EVALUASI PEMBELAJARAN", heading: docx.HeadingLevel.HEADING_1, alignment: docx.AlignmentType.CENTER }),
+      new docx.Paragraph({ 
+        text: "EVALUASI PEMBELAJARAN", 
+        heading: docx.HeadingLevel.HEADING_1, 
+        alignment: docx.AlignmentType.CENTER 
+      }),
       new docx.Paragraph({ text: `Mata Pelajaran: ${task.config.subject}`, spacing: { before: 200 } }),
       new docx.Paragraph({ text: `Kelas / Jenjang: ${task.config.grade}` }),
       new docx.Paragraph({ text: `Topik Materi: ${task.config.topic}`, spacing: { after: 400 } }),
     ];
+
     task.result.questions.forEach((q: any, i: number) => {
-      children.push(new docx.Paragraph({ children: [new docx.TextRun({ text: `${i + 1}. `, bold: true }), new docx.TextRun({ text: q.questionText })], spacing: { before: 200, after: 100 } }));
+      children.push(
+        new docx.Paragraph({
+          children: [
+            new docx.TextRun({ text: `${i + 1}. `, bold: true }),
+            new docx.TextRun({ text: q.questionText }),
+          ],
+          spacing: { before: 200, after: 100 },
+        })
+      );
+
       if (q.options) {
         q.options.forEach((opt: string, idx: number) => {
-          children.push(new docx.Paragraph({ children: [new docx.TextRun({ text: `    ${String.fromCharCode(65 + idx)}. `, bold: true }), new docx.TextRun({ text: opt })], spacing: { after: 50 } }));
+          children.push(
+            new docx.Paragraph({
+              children: [
+                new docx.TextRun({ text: `    ${String.fromCharCode(65 + idx)}. `, bold: true }),
+                new docx.TextRun({ text: opt }),
+              ],
+              spacing: { after: 50 },
+            })
+          );
         });
       }
     });
-    const doc = new docx.Document({ sections: [{ properties: { page: { size: { width: dimensions.width, height: dimensions.height }, margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } }, children }] });
+
+    if (showAnswersInPrint) {
+      children.push(new docx.Paragraph({ text: "", spacing: { before: 400 } }));
+      children.push(new docx.Paragraph({ text: "KUNCI JAWABAN & PEMBAHASAN", heading: docx.HeadingLevel.HEADING_2 }));
+      
+      task.result.questions.forEach((q: any, i: number) => {
+        children.push(
+          new docx.Paragraph({
+            children: [
+              new docx.TextRun({ text: `${i + 1}. Jawaban: ${q.correctAnswer}`, bold: true }),
+            ],
+            spacing: { before: 100 },
+          })
+        );
+        children.push(
+          new docx.Paragraph({
+            children: [
+              new docx.TextRun({ text: `Pembahasan: ${q.explanation}`, italics: true }),
+            ],
+            spacing: { after: 100 },
+          })
+        );
+      });
+    }
+
+    const doc = new docx.Document({
+      sections: [
+        {
+          properties: {
+            page: {
+              size: {
+                width: dimensions.width,
+                height: dimensions.height,
+              },
+              margin: {
+                top: 1440, // 1 inch
+                right: 1440,
+                bottom: 1440,
+                left: 1440,
+              }
+            }
+          },
+          children: children,
+        },
+      ],
+    });
+
     const blob = await docx.Packer.toBlob(doc);
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a"); link.href = url; link.download = `Soal_${task.config.subject.replace(/ /g, '_')}.docx`; link.click(); URL.revokeObjectURL(url);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Soal_${task.config.subject.replace(/ /g, '_')}_${paperSize}.docx`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadBlueprintPdf = () => {
+    setActiveTab('blueprint');
+    setTimeout(() => window.print(), 100);
+  };
+
+  const handleDownloadKisiKisi = async () => {
+    const dimensions = getPageDimensions();
+    const tableRows = [
+      new docx.TableRow({
+        children: [
+          new docx.TableCell({ width: { size: 500, type: docx.WidthType.DXA }, children: [new docx.Paragraph({ text: "No", alignment: docx.AlignmentType.CENTER, style: "bold" })] }),
+          new docx.TableCell({ width: { size: 2500, type: docx.WidthType.DXA }, children: [new docx.Paragraph({ text: "Topik/Materi", alignment: docx.AlignmentType.CENTER, style: "bold" })] }),
+          new docx.TableCell({ width: { size: 1500, type: docx.WidthType.DXA }, children: [new docx.Paragraph({ text: "Level Kognitif", alignment: docx.AlignmentType.CENTER, style: "bold" })] }),
+          new docx.TableCell({ width: { size: 4000, type: docx.WidthType.DXA }, children: [new docx.Paragraph({ text: "Indikator Soal", alignment: docx.AlignmentType.CENTER, style: "bold" })] }),
+          new docx.TableCell({ width: { size: 1000, type: docx.WidthType.DXA }, children: [new docx.Paragraph({ text: "Kunci", alignment: docx.AlignmentType.CENTER, style: "bold" })] }),
+        ],
+      }),
+    ];
+
+    task.result.questions.forEach((q: any, idx: number) => {
+      tableRows.push(
+        new docx.TableRow({
+          children: [
+            new docx.TableCell({ children: [new docx.Paragraph({ text: (idx + 1).toString(), alignment: docx.AlignmentType.CENTER })] }),
+            new docx.TableCell({ children: [new docx.Paragraph({ text: task.config.topic })] }),
+            new docx.TableCell({ children: [new docx.Paragraph({ text: q.cognitiveLevel || task.config.cognitiveLevel })] }),
+            new docx.TableCell({ children: [new docx.Paragraph({ text: q.questionText.substring(0, 100) + (q.questionText.length > 100 ? "..." : "") })] }),
+            new docx.TableCell({ children: [new docx.Paragraph({ text: q.correctAnswer.toString(), alignment: docx.AlignmentType.CENTER })] }),
+          ],
+        })
+      );
+    });
+
+    const doc = new docx.Document({
+      sections: [
+        {
+          properties: {
+            page: {
+              size: {
+                width: dimensions.width,
+                height: dimensions.height,
+              }
+            }
+          },
+          children: [
+            new docx.Paragraph({ text: "KISI-KISI EVALUASI PEMBELAJARAN", heading: docx.HeadingLevel.HEADING_1, alignment: docx.AlignmentType.CENTER }),
+            new docx.Paragraph({ text: `Mata Pelajaran: ${task.config.subject}`, spacing: { before: 200 } }),
+            new docx.Paragraph({ text: `Kelas / Jenjang: ${task.config.grade}` }),
+            new docx.Paragraph({ text: `Topik Materi: ${task.config.topic}`, spacing: { after: 400 } }),
+            new docx.Table({
+              rows: tableRows,
+              width: { size: 100, type: docx.WidthType.PERCENTAGE },
+            }),
+          ],
+        },
+      ],
+    });
+
+    const blob = await docx.Packer.toBlob(doc);
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Kisi_Kisi_${task.config.subject.replace(/ /g, '_')}_${paperSize}.docx`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-20 tex2jax_process" ref={containerRef}>
-      <style>{`@media print { @page { size: ${paperSize === 'A4' ? 'A4' : '215mm 330mm'}; margin: 15mm 20mm; } body { background: white !important; font-size: 11pt; color: black; } .print-hidden { display: none !important; } .break-inside-avoid { break-inside: avoid; } .print-only { display: block !important; } } .print-only { display: none; }`}</style>
+      <style>{`
+        @media print {
+          @page {
+            size: ${paperSize === 'A4' ? 'A4' : '215mm 330mm'};
+            margin: 15mm 20mm;
+          }
+          body { background: white !important; font-size: 11pt; color: black; }
+          .print-hidden, header, nav, aside { display: none !important; }
+          .no-shadow { box-shadow: none !important; border: none !important; padding: 0 !important; }
+          .break-inside-avoid { break-inside: avoid; }
+          .print-only { display: block !important; }
+          .print-header { 
+            border-bottom: 2px solid black; 
+            padding-bottom: 10px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end;
+          }
+          .print-header h1 { font-size: 14pt; font-weight: 800; margin: 0; }
+          .print-header p { font-size: 9pt; margin: 0; }
+          .print-info-grid {
+             display: grid;
+             grid-template-columns: 1fr 1fr;
+             gap: 8px 40px;
+             font-size: 10pt;
+             margin-bottom: 25px;
+             padding: 10px;
+             border: 1px solid #ddd;
+             border-radius: 8px;
+          }
+          .option-box { background: transparent !important; border: 1px solid #ddd !important; }
+          .answer-box { border-left-color: #000 !important; background: transparent !important; margin-top: 10px !important; }
+          .print-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          .print-table th, .print-table td { border: 1px solid black; padding: 8px; text-align: left; font-size: 9pt; }
+          .print-table th { background-color: #f2f2f2 !important; font-weight: bold; text-align: center; }
+        }
+        .print-only { display: none; }
+      `}</style>
+
+      {/* Formal Header for Print Mode */}
+      <div className="print-only">
+        <div className="print-header">
+           <div>
+             <h1>{activeTab === 'blueprint' ? 'KISI-KISI ' : ''}{task.config.subject.toUpperCase()}</h1>
+             <p>Topik: {task.config.topic}</p>
+             <p>Tingkat: {task.config.grade} | Kesulitan: {task.config.difficulty}</p>
+           </div>
+           <div className="text-right">
+             <p className="font-bold">{activeTab === 'blueprint' ? 'DOKUMEN KURIKULUM' : 'LEMBAR EVALUASI'}</p>
+             <p>Waktu: {activeTab === 'blueprint' ? '-' : '60 - 90 Menit'}</p>
+           </div>
+        </div>
+        {activeTab === 'soal' && (
+          <div className="print-info-grid">
+            <div className="flex flex-col gap-2">
+              <span>Nama : ...............................................</span>
+              <span>Kelas : ...............................................</span>
+            </div>
+            <div className="flex flex-col gap-2">
+              <span>No. Absen : ............</span>
+              <span>Tanggal : ............</span>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="bg-white p-8 rounded-3xl shadow-sm border border-orange-100 space-y-6 print-hidden">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="flex-1"><h2 className="text-3xl font-black text-slate-900 uppercase leading-tight">{task.config.subject}</h2><div className="flex flex-wrap gap-2 mt-2"><span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase">{task.config.grade}</span><span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-lg text-[10px] font-black uppercase">{task.config.difficulty}</span></div></div>
-          <div className="flex items-center gap-3 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
-             <button onClick={() => setPaperSize('A4')} className={`px-4 py-2 rounded-xl text-xs font-black ${paperSize === 'A4' ? 'bg-orange-500 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>A4</button>
-             <button onClick={() => setPaperSize('LEGAL')} className={`px-4 py-2 rounded-xl text-xs font-black ${paperSize === 'LEGAL' ? 'bg-orange-500 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>LEGAL</button>
+          <div className="flex-1">
+            <h2 className="text-3xl font-black text-slate-900 uppercase leading-tight">{task.config.subject}</h2>
+            <div className="flex flex-wrap gap-2 mt-2">
+              <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase">{task.config.grade}</span>
+              <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-lg text-[10px] font-black uppercase">{task.config.difficulty}</span>
+              <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-[10px] font-black uppercase">{task.result.questions.length} Soal</span>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 shrink-0 items-end">
+            <div className="flex items-center gap-3 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+               <button 
+                onClick={() => setPaperSize('A4')}
+                className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${paperSize === 'A4' ? 'bg-orange-500 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}
+               >A4</button>
+               <button 
+                onClick={() => setPaperSize('LEGAL')}
+                className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${paperSize === 'LEGAL' ? 'bg-orange-500 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}
+               >LEGAL (F4)</button>
+            </div>
           </div>
         </div>
-        <div className="flex flex-wrap gap-3 border-t border-orange-50 pt-6">
-           <Button variant="secondary" onClick={() => window.print()}><Printer size={18} /> Simpan PDF</Button>
-           <Button variant="primary" onClick={handleDownloadSoalDocx}><FileText size={18} /> Simpan Soal (.doc)</Button>
+
+        <div className="flex flex-wrap gap-3 border-t border-orange-50 pt-6 justify-center md:justify-start">
+           <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl mr-2">
+             <button onClick={() => setActiveTab('soal')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === 'soal' ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>
+               <FileText size={16} /> Paket Soal
+             </button>
+             <button onClick={() => setActiveTab('blueprint')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeTab === 'blueprint' ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>
+               <TableIcon size={16} /> Kisi-Kisi
+             </button>
+           </div>
+           
+           {activeTab === 'soal' ? (
+             <>
+               <Button variant="secondary" onClick={() => window.print()}>
+                 <Printer size={18} /> Simpan PDF
+               </Button>
+               <Button variant="primary" onClick={handleDownloadSoalDocx}>
+                 <FileText size={18} /> Simpan Soal (.doc)
+               </Button>
+               <button 
+                onClick={() => setShowAnswersInPrint(!showAnswersInPrint)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all border-2 ${showAnswersInPrint ? 'bg-green-50 border-green-200 text-green-600' : 'bg-slate-50 border-slate-200 text-slate-500'}`}
+               >
+                 {showAnswersInPrint ? <Eye size={16} /> : <EyeOff size={16} />}
+                 {showAnswersInPrint ? 'Kunci: TAMPIL' : 'Kunci: SEMBUNYI'}
+               </button>
+             </>
+           ) : (
+             <>
+               <Button variant="secondary" onClick={handleDownloadBlueprintPdf}>
+                 <Printer size={18} /> Kisi-Kisi (PDF)
+               </Button>
+               <Button variant="success" onClick={handleDownloadKisiKisi}>
+                 <FileBox size={18} /> Kisi-Kisi (.doc)
+               </Button>
+             </>
+           )}
         </div>
       </div>
-      <div className="space-y-8">
-        {task.result.questions.map((q: any, i: number) => (
-          <Card key={i} className="relative overflow-hidden break-inside-avoid no-shadow">
-            <div className="flex items-start gap-4 mb-6"><span className="w-10 h-10 bg-orange-500 text-white rounded-xl flex items-center justify-center font-black shrink-0">{i + 1}.</span><div className="text-xl font-bold text-slate-800 leading-relaxed pt-1">{q.questionText}</div></div>
-            {q.imageUrl && <img src={q.imageUrl} className="w-full max-h-[400px] object-contain rounded-2xl mb-8 border border-slate-100" alt="Stimulus" />}
-            {q.options && <div className="grid grid-cols-1 gap-4 mb-10">{q.options.map((opt: string, idx: number) => (<div key={idx} className="flex items-start gap-4 p-5 rounded-2xl border-2 border-slate-50 bg-slate-50/30"><div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-black text-slate-400 shrink-0">{String.fromCharCode(65 + idx)}</div><div className="font-bold text-slate-700 pt-0.5">{opt}</div></div>))}</div>}
-            <div className={`p-8 bg-orange-50 rounded-2xl border-l-8 border-orange-500`}><p className="font-black text-slate-800 mb-2">Jawaban: {Array.isArray(q.correctAnswer) ? q.correctAnswer.join(', ') : q.correctAnswer}</p><p className="text-sm text-slate-600 leading-relaxed italic">{q.explanation}</p></div>
-          </Card>
-        ))}
-      </div>
+      
+      {activeTab === 'soal' ? (
+        <div className="space-y-8">
+          {task.result.questions.map((q: any, i: number) => (
+            <Card key={i} className="relative overflow-hidden break-inside-avoid no-shadow">
+              <div className="flex items-start gap-4 mb-6 print:mb-4">
+                <span className="w-10 h-10 bg-orange-500 text-white rounded-xl flex items-center justify-center font-black shrink-0 print:bg-transparent print:text-black print:w-auto print:h-auto print:font-bold print:text-lg">{i + 1}.</span>
+                <div className="text-xl font-bold text-slate-800 leading-relaxed print:text-lg pt-1">{q.questionText}</div>
+              </div>
+              {q.imageUrl && <img src={q.imageUrl} className="w-full max-h-[400px] object-contain rounded-2xl mb-8 border border-slate-100 print:max-h-[300px]" alt="Stimulus" />}
+              {q.options && (
+                <div className="grid grid-cols-1 gap-4 mb-10 print:gap-2 print:mb-6">
+                  {q.options.map((opt: string, idx: number) => (
+                    <div key={idx} className="flex items-start gap-4 p-5 rounded-2xl border-2 border-slate-50 bg-slate-50/30 option-box print:p-2 print:border-none print:bg-transparent">
+                      <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-black text-slate-400 shrink-0 print:border-black print:text-black print:w-6 print:h-6 print:text-sm">{String.fromCharCode(65 + idx)}</div>
+                      <div className="font-bold text-slate-700 print:font-normal pt-0.5">{opt}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {(showAnswersInPrint || !window.matchMedia('print').matches) && (
+                <div className={`p-8 bg-orange-50 rounded-2xl border-l-8 border-orange-500 answer-box ${!showAnswersInPrint ? 'print:hidden' : ''}`}>
+                  <p className="font-black text-slate-800 mb-2 print:text-sm">Jawaban: {Array.isArray(q.correctAnswer) ? q.correctAnswer.join(', ') : q.correctAnswer}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed italic tex2jax_process print:text-xs print:italic">{q.explanation}</p>
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card className="no-shadow overflow-hidden p-0 sm:p-0">
+           <div className="overflow-x-auto print:overflow-visible">
+             <table className="w-full text-sm border-collapse print-table">
+               <thead className="bg-slate-50 border-b-2 border-orange-100 text-[10px] font-black text-slate-400 uppercase tracking-wider print:hidden">
+                 <tr>
+                   <th className="py-4 px-6 text-center w-16">No</th>
+                   <th className="py-4 px-6 text-left">Indikator Soal</th>
+                   <th className="py-4 px-6 text-center">Level</th>
+                   <th className="py-4 px-6 text-center">Tipe</th>
+                   <th className="py-4 px-6 text-center">Kunci</th>
+                 </tr>
+               </thead>
+               <tbody className="divide-y divide-orange-50 print:divide-y-0">
+                 {task.result.questions.map((q: any, idx: number) => (
+                   <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                     <td className="py-4 px-6 text-center font-black text-slate-400 print:text-black print:font-normal">{idx + 1}</td>
+                     <td className="py-4 px-6 font-medium text-slate-700 leading-relaxed max-w-md print:text-black">{q.questionText.substring(0, 150)}{q.questionText.length > 150 ? '...' : ''}</td>
+                     <td className="py-4 px-6 text-center print:text-black">
+                        <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[10px] font-black uppercase print:bg-transparent print:p-0 print:text-xs">{q.cognitiveLevel || task.config.cognitiveLevel.split(' - ')[0]}</span>
+                     </td>
+                     <td className="py-4 px-6 text-center text-[10px] font-bold text-slate-500 uppercase print:text-black print:text-xs">{task.config.questionType}</td>
+                     <td className="py-4 px-6 text-center font-black text-orange-500 print:text-black print:font-normal">{Array.isArray(q.correctAnswer) ? q.correctAnswer.join(', ') : q.correctAnswer}</td>
+                   </tr>
+                 ))}
+               </tbody>
+             </table>
+           </div>
+           
+           <div className="p-8 bg-slate-50 border-t border-orange-50 print:hidden">
+             <p className="text-xs text-slate-500 italic flex items-center gap-2">
+               <Info size={14} className="text-orange-400" />
+               Tabel ini disusun secara otomatis oleh AI berdasarkan analisis konten soal terhadap taksonomi kognitif dan tujuan pembelajaran.
+             </p>
+           </div>
+        </Card>
+      )}
     </div>
   );
 }
