@@ -74,6 +74,7 @@ export interface QuizTask {
   createdAt: number;
   ownerId: string;
   viewed?: boolean;
+  isPublished?: boolean; // Fitur publikasi konten
 }
 
 export interface QuizConfig {
