@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { QuizConfig, QuizResult, QuestionType, ApiKeyEntry, SubjectCategory } from "../types";
 
@@ -57,12 +58,24 @@ export const generateQuizPrompt = (config: QuizConfig): string => {
 
   let typeInstruction = "";
   if (questionType === QuestionType.PG || questionType === QuestionType.PGK) {
-    typeInstruction = `- Tipe: ${questionType}. WAJIB sertakan tepat ${optionsCount} pilihan jawaban (options).`;
-    if (questionType === QuestionType.PGK) {
-      typeInstruction += " Jawaban benar bisa > 1. Berikan array string pada 'correctAnswer'.";
-    }
+    typeInstruction = `
+    TIPE SOAL: ${questionType}.
+    - WAJIB berikan tepat ${optionsCount} pilihan jawaban pada field 'options'.
+    - Untuk PGK (Pilihan Ganda Kompleks), jawaban benar bisa lebih dari satu.`;
   } else if (questionType === QuestionType.BS) {
-    typeInstruction = "- Tipe Benar/Salah: 'options' berisi ['Benar', 'Salah'].";
+    typeInstruction = `
+    TIPE SOAL: Benar/Salah.
+    - Field 'options' WAJIB berisi tepat dua nilai: ["Benar", "Salah"].`;
+  } else if (questionType === QuestionType.US) {
+    typeInstruction = `
+    TIPE SOAL: Uraian Singkat (Short Answer).
+    - DILARANG memberikan pilihan jawaban. Field 'options' HARUS kosong [].
+    - 'correctAnswer' berisi satu jawaban singkat yang padat dan tepat.`;
+  } else if (questionType === QuestionType.ESSAY) {
+    typeInstruction = `
+    TIPE SOAL: Essai (Essay).
+    - DILARANG memberikan pilihan jawaban. Field 'options' HARUS kosong [].
+    - 'correctAnswer' berisi rubrik jawaban lengkap atau paragraf kunci jawaban.`;
   }
 
   return `
@@ -70,17 +83,20 @@ export const generateQuizPrompt = (config: QuizConfig): string => {
     Mapel: ${subject}. Topik: ${topic}.
     Grade: ${grade}. Jumlah Soal: ${totalQuestions}.
     Level: ${cognitiveLevel}, Kesulitan: ${difficulty}.
+    
     ${typeInstruction}
     ${precisionInstruction}
 
-    WAJIB: Jika ada rumus atau simbol matematika/sains, GUNAKAN LaTeX ($...$ atau $$...$$) baik di teks soal, opsi, maupun pada bagian 'explanation' (pembahasan).
-    
-    VISUAL:
-    - Berikan 'imagePrompt' untuk ${imageCount} soal pertama.
-    - Berikan array 'optionImagePrompts' untuk ${imageOptionCount} soal pertama.
+    KETENTUAN OUTPUT:
+    1. WAJIB: Gunakan LaTeX ($...$ atau $$...$$) untuk rumus matematika/sains.
+    2. VISUAL: 
+       - Berikan 'imagePrompt' untuk ${imageCount} soal pertama.
+       - Berikan array 'optionImagePrompts' untuk ${imageOptionCount} soal pertama (hanya jika tipe PG/PGK).
+    3. STRUKTUR: Harus konsisten dengan skema JSON yang diminta. Jika tipe soal adalah ESSAY atau US, field 'options' tidak boleh diisi (biarkan array kosong).
 
-    ${summaryText ? `MATERI: ${summaryText}` : ''}
-    OUTPUT: JSON murni { "questions": [...] }.
+    ${summaryText ? `REFERENSI MATERI: ${summaryText}` : ''}
+    
+    Format respon harus JSON murni { "questions": [...] }.
   `;
 };
 
@@ -127,10 +143,18 @@ export async function generateQuizWithGemini(config: QuizConfig, selectedKey: Ap
               properties: {
                 id: { type: Type.NUMBER },
                 questionText: { type: Type.STRING },
-                options: { type: Type.ARRAY, items: { type: Type.STRING } },
+                options: { 
+                  type: Type.ARRAY, 
+                  items: { type: Type.STRING },
+                  description: "Kosongkan array ini jika tipe soal adalah Essai atau Uraian Singkat."
+                },
                 imagePrompt: { type: Type.STRING },
                 optionImagePrompts: { type: Type.ARRAY, items: { type: Type.STRING } },
-                correctAnswer: { type: Type.ARRAY, items: { type: Type.STRING } },
+                correctAnswer: { 
+                  type: Type.ARRAY, 
+                  items: { type: Type.STRING },
+                  description: "Berisi satu atau lebih string jawaban benar."
+                },
                 explanation: { type: Type.STRING },
                 cognitiveLevel: { type: Type.STRING }
               },
